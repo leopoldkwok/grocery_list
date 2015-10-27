@@ -83,10 +83,20 @@ app.service("GroceryService", function($http) {
 
         if (updatedItem) {
 
-            updatedItem.completed = entry.completed;
-            updatedItem.itemName = entry.itemName;
-            updatedItem.date = entry.date;
-        
+            $http.post("data/updatedItem.json", entry)
+            
+                .success(function(data) {
+
+                if(data.status == 1) {
+                updatedItem.completed = entry.completed;
+                updatedItem.itemName = entry.itemName;
+                updatedItem.date = entry.date;
+                }
+            })
+                .error(function(data, status) {
+
+                })
+
         } else {
             $http.post("data/added_item.json", entry)
                 .success(function(data) {

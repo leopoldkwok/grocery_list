@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang='en' ng-app="groceryListApp">
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,47 +11,25 @@
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 
 </head>
-<body>
-<nav class="navbar navbar-default">
+<body ng-controller="HomeController">
+<nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="#">
         <span class="glyphicon glyphicon-apple" style="color:#5bdb48"></span>
-        Grocery List
+        {{appTitle}}
       </a>
     </div>
   </div>
 </nav>
 
-<div class="container">
+<div class="container" ng-controller="GroceryListItemsController">
     <div class="col-xs-12">
         <ul class="list-group">
-            <li class="list-group-item text-center clearfix">
-                <button type="button" class="btn btn-sm btn-success pull-left">
-                    <span class="glyphicon glyphicon-unchecked"></span>
-                </button>
-                <span style="font-weight:bold">Item 1</span>
-                <button type="button" class="btn btn-sm btn-default pull-right">
-                    <span class="glyphicon glyphicon-pencil"></span>
-                </button>
-            </li>
-            <li class="list-group-item text-center clearfix">
-                <button type="button" class="btn btn-sm btn-success pull-left">
-                    <span class="glyphicon glyphicon-unchecked"></span>
-                </button>
-                <span style="font-weight:bold">Item 2</span>
-                <button type="button" class="btn btn-sm btn-default pull-right">
-                    <span class="glyphicon glyphicon-pencil"></span>
-                </button>
-            </li>
-            <li class="list-group-item text-center clearfix">
-                <button type="button" class="btn btn-sm btn-success pull-left">
-                    <span class="glyphicon glyphicon-unchecked"></span>
-                </button>
-                <span style="font-weight:bold">Item 3</span>
-                <button type="button" class="btn btn-sm btn-default pull-right">
-                    <span class="glyphicon glyphicon-pencil"></span>
-                </button>
+            <li ng-repeat="item in groceryItems" class="list-group-item text-center clearfix">
+                
+                <span style="font-weight: bold">{{ item.itemName}}</span>
+            
             </li>
         </ul>
     </div>

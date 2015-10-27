@@ -19,20 +19,32 @@ app.config(function($routeProvider) {
         })
 });
 
-app.service("GroceryService", function() {
+app.service("GroceryService", function($http) {
 
-    var groceryService ={};
+    var groceryService = {};
 
-    groceryService.groceryItems = [
-        {id: 1, completed: true, itemName: 'milk', date: new Date("October 1, 2014 11:13:00")},
-        {id: 2, completed: true, itemName: 'cookies', date: new Date("October 1, 2014 11:13:00")},
-        {id: 3, completed: true, itemName: 'ice cream', date: new Date("October 1, 2014 11:13:00")},
-        {id: 4, completed: true, itemName: 'potatoes', date: new Date("October 2, 2014 11:13:00")},
-        {id: 5, completed: true, itemName: 'cereal', date: new Date("October 3, 2014 11:13:00")},
-        {id: 6, completed: true, itemName: 'bread', date: new Date("October 3, 2014 11:13:00")},
-        {id: 7, completed: true, itemName: 'eggs', date: new Date("October 4, 2014 11:13:00")},
-        {id: 8, completed: true, itemName: 'tortillas', date: new Date("October 5, 2014 11:13:00")}
-    ];
+    groceryService.groceryItems = [];
+
+         // {id: 1, completed: true, itemName: 'milk', date: new Date("October 1, 2014 11:13:00")},
+        // {id: 2, completed: true, itemName: 'cookies', date: new Date("October 1, 2014 11:13:00")},
+        // {id: 3, completed: true, itemName: 'ice cream', date: new Date("October 1, 2014 11:13:00")},
+        // {id: 4, completed: true, itemName: 'potatoes', date: new Date("October 2, 2014 11:13:00")},
+        // {id: 5, completed: true, itemName: 'cereal', date: new Date("October 3, 2014 11:13:00")},
+        // {id: 6, completed: true, itemName: 'bread', date: new Date("October 3, 2014 11:13:00")},
+        // {id: 7, completed: true, itemName: 'eggs', date: new Date("October 4, 2014 11:13:00")},
+        // {id: 8, completed: true, itemName: 'tortillas', date: new Date("October 5, 2014 11:13:00")}
+
+    $http.get("data/server_data.json")
+        .success(function(data) {
+            groceryService.groceryItems = data;
+
+            for(var item in groceryService.groceryItems) {
+                groceryService.groceryItems[item].date = new Date(groceryService.groceryItems[item].date);
+            }
+        })
+        .error(function(data, status) {
+            alert("Things went wrong!");
+        });
     
     groceryService.findById = function(id) {
         for(var item in groceryService.groceryItems) {
@@ -62,7 +74,6 @@ app.service("GroceryService", function() {
 
     groceryService.removeItem = function(entry) {
         var index = groceryService.groceryItems.indexOf(entry);
-
         groceryService.groceryItems.splice(index, 1);
     };
     
@@ -77,7 +88,17 @@ app.service("GroceryService", function() {
             updatedItem.date = entry.date;
         
         } else {
-            entry.id = groceryService.getNewId();
+            $http.post("data/added_item.json", entry)
+                .success(function(data) {
+                    entry.id = data.newId;
+                })
+                .error(function(data, status) {
+
+                });
+
+            // client side
+            // entry.id = groceryService.getNewId();
+
             groceryService.groceryItems.push(entry);
         }
 
@@ -99,12 +120,17 @@ app.controller("HomeController", ["$scope", "GroceryService", function($scope, G
         GroceryService.markCompleted(entry);
     };
     
+    $scope.$watch(function() {return GroceryService.groceryItems; }, function(groceryItems) {
+        $scope.groceryItems = groceryItems;
+    
+    })
+    
 }]);
 
 app.controller("GroceryListItemController", ["$scope", "$routeParams", "$location", "GroceryService",  function($scope, $routeParams, $location, GroceryService) {
 
     if(!$routeParams.id) {
-        $scope.groceryItem = { id:0, completed:true, itemName: "", date: new Date() };
+        $scope.groceryItem = { id:0, completed: false, itemName: "", date: new Date() };
     } else {
         $scope.groceryItem = _.clone(GroceryService.findById(parseInt($routeParams.id)));
     }

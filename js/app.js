@@ -25,6 +25,8 @@ app.service("GroceryService", function($http) {
 
     groceryService.groceryItems = [];
 
+        /* the below data will be placed in server_data.json */
+
          // {id: 1, completed: true, itemName: 'milk', date: new Date("October 1, 2014 11:13:00")},
         // {id: 2, completed: true, itemName: 'cookies', date: new Date("October 1, 2014 11:13:00")},
         // {id: 3, completed: true, itemName: 'ice cream', date: new Date("October 1, 2014 11:13:00")},
@@ -39,6 +41,7 @@ app.service("GroceryService", function($http) {
             groceryService.groceryItems = data;
 
             for(var item in groceryService.groceryItems) {
+                //make the date as an object rather than a string
                 groceryService.groceryItems[item].date = new Date(groceryService.groceryItems[item].date);
             }
         })
@@ -84,7 +87,7 @@ app.service("GroceryService", function($http) {
         if (updatedItem) {
 
             $http.post("data/updatedItem.json", entry)
-            
+
                 .success(function(data) {
 
                 if(data.status == 1) {
@@ -130,6 +133,7 @@ app.controller("HomeController", ["$scope", "GroceryService", function($scope, G
         GroceryService.markCompleted(entry);
     };
     
+    // watches for a change - attaches a listener to the data
     $scope.$watch(function() {return GroceryService.groceryItems; }, function(groceryItems) {
         $scope.groceryItems = groceryItems;
     
